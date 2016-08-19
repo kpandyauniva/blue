@@ -1,0 +1,14 @@
+imports:
+- path: nextflow.jinja
+
+resources:
+- name: nextflow_deployment
+  type: nextflow.jinja
+  properties:
+   zone: us-east1-b 
+   installerImage: "https://www.googleapis.com/compute/v1/projects/cloudflow-1278/global/images/uc-v614-20160810-45x"
+   machineType: n1-standard-1
+   numberOfWorkers: 1
+   clusterMachineType: n1-standard-2
+   glusterDiskSize: 10
+   clusterMachineImage: "https://www.googleapis.com/compute/v1/projects/cloudflow-1278/global/images/fedora-cloud-atomic-23-20160524"

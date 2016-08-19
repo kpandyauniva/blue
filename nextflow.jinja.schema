@@ -1,0 +1,39 @@
+imports:
+- path: nextflow.jinja
+
+info:
+  version: 1.0
+  title: Unicloud Gluster deployment
+
+required:
+  - zone
+  - machineType
+  - numberOfWorkers
+  - installerImage
+
+properties:
+  zone:
+    type: string
+    default: us-central1-f
+    x-googleProperty:
+      type: GCE_ZONE
+
+  numberOfWorkers:
+    type: integer
+    default: 3
+    minimum: 1
+
+  machineType:
+    type: string
+    default: n1-standard-1
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 1
+        minRamGb: 3.5
+
+  network:
+    type: string
+    x-googleProperty:
+      type: GCE_NETWORK

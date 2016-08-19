@@ -1,0 +1,47 @@
+{% set namePrefix = env["deployment"] %}
+{% set project = env["project"] %}
+{% set zone = properties["zone"] %}
+{% set numberOfWorkers = properties["numberOfWorkers"] %}
+{% set machineType =  properties["machineType"] %}
+{% set clusterMachineType = properties["clusterMachineType"] %}
+{% set glusterDiskSize = properties["glusterDiskSize"] %}
+{% set installerImage = properties["installerImage"] %}
+{% set clusterMachineImage = properties["clusterMachineImage"] %}
+
+resources:
+- type: compute.v1.instance
+  name: unicloud-k8s-installer
+  properties:
+    zone: {{ zone }}
+    machineType: https://www.googleapis.com/compute/v1/projects/{{project}}/zones/{{zone}}/machineTypes/{{ machineType }}
+    disks:
+    - deviceName: boot
+      type: PERSISTENT
+      boot: true
+      autoDelete: true
+      initializeParams:
+        sourceImage: {{ installerImage}}
+    metadata:
+     items:
+     - key: numberOfWorkers
+       value: {{ numberOfWorkers }}
+     - key: clusterMachineType
+       value: {{ clusterMachineType}}
+     - key: glusterDiskSize
+       value: {{ glusterDiskSize}}
+     - key: clusterMachineImage
+       value: {{ clusterMachineImage}}
+     - key: startup-script
+       value: |
+         #!/bin/bash
+         yum install wget git dos2unix -y
+         cd /tmp
+         git clone https://github.com/kpandyauniva/blue2 2>nextflow_error.txt
+         cd blue2
+         dos2unix testscript.sh
+         bash testscript.sh&  2>>/tmp/nextflow_error.txt
+    networkInterfaces:
+    - network: global/networks/default
+      accessConfigs:
+      - name: External NAT
+        type: ONE_TO_ONE_NAT
